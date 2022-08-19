@@ -23,7 +23,7 @@ OUTPUT_SHAPE = 500
 
 # Initializing weights from pre-trained 
 LOAD = True
-LOAD_CHECKPOINT_PATH = "../weights/saved_checkpoint.hdf5"
+LOAD_CHECKPOINT_PATH = "../weights/EASTER2--222--6.54.hdf5"
 
 # Other learning parametes
 LEARNING_RATE = 0.01
@@ -33,4 +33,4 @@ BATCH_NORM_DECAY = 0.997
 # Checkpoints parametes
 CHECKPOINT_PATH = '../weights/EASTER2--{epoch:02d}--{loss:.02f}.hdf5'
 LOGS_DIR = '../logs'
-BEST_MODEL_PATH = "../weights/saved_checkpoint.hdf5"
+BEST_MODEL_PATH = "../weights/EASTER2--222--6.54.hdf5"

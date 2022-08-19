@@ -35,3 +35,13 @@ If you find our work helpful, please cite the following:
   year={2022}
 }
 ```
+
+## special weht
+
+- image size about lx => 861x32
+3k sentence
+best so far - CER : 2.85 (orginal on IAM : 	2.75)
+../weights/EASTER2--222--6.54.hdf5
+
+
+after 200 epochs, not that much of improvement

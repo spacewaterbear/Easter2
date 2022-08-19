@@ -1,3 +1,8 @@
+import sys
+
+import cv2
+import pandas as pd
+
 import config
 import tensorflow
 import tensorflow as tf
@@ -61,6 +66,42 @@ def decoder(output, letters):
         ret.append(outstr)
     return ret
 
+def predict_one_image(img, model, charlist):
+    img = read_and_process_image(img)
+    output = model.predict(img)
+    prediction = decoder(output, charlist)
+    output = (prediction[0].strip(" ").replace("  ", " "))
+    return output
+
+def preprocess(img, augment=True):
+    if augment:
+        img = self.apply_taco_augmentations(img)
+
+    # scaling image [0, 1]
+    img = img / 255
+    img = img.swapaxes(-2, -1)[..., ::-1]
+    target = np.ones((config.INPUT_WIDTH, config.INPUT_HEIGHT))
+    new_x = config.INPUT_WIDTH / img.shape[0]
+    new_y = config.INPUT_HEIGHT / img.shape[1]
+    min_xy = min(new_x, new_y)
+    new_x = int(img.shape[0] * min_xy)
+    new_y = int(img.shape[1] * min_xy)
+    img2 = cv2.resize(img, (new_y, new_x))
+    target[:new_x, :new_y] = img2
+    return 1 - (target)
+
+def read_and_process_image(img_path: str):
+    img1 = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+    img = preprocess(img1, augment=False)
+    img = np.expand_dims(img, 0)
+    return img
+
+def test_on_image(img_path: str):
+    with open("charlist.txt", "r") as f:
+        charlist = f.read().splitlines()
+    model = load_easter_model(config.BEST_MODEL_PATH)
+    prediction = predict_one_image(img_path, model, charlist)
+    return prediction
 
 def test_on_iam(show=True, partition='test', uncased=False, checkpoint="Empty"):
 
@@ -73,13 +114,19 @@ def test_on_iam(show=True, partition='test', uncased=False, checkpoint="Empty"):
     validation_data.validationSet()
     test_data.testSet()
     charlist = training_data.charList
+    charlist_str = '\n'.join(charlist)
+    with open("charlist.txt", "w") as f:
+        f.write(charlist_str)
+
+    with open("charlist.txt", "r") as f:
+        charlist = f.read().splitlines()
+
     print("loading checkpoint...")
     print("calculating results...")
-
     model = load_easter_model(checkpoint)
     char_error = 0
     total_chars = 0
-
+    data = []
     batches = 1
     while batches > 0:
         batches = batches - 1
@@ -104,7 +151,14 @@ def test_on_iam(show=True, partition='test', uncased=False, checkpoint="Empty"):
 
             total_chars += len(truth)
             if show:
+
+                error = edit_distance(output, truth)
                 print("Ground Truth :", truth)
-                print("Prediction [", edit_distance(output, truth), "]  : ", output)
+                print("Prediction [", error, "]  : ", output)
                 print("*" * 50)
+                data.append({"ground_truth": truth, "prediction": output, "error": error})
+
     print("Character error rate is : ", (char_error / total_chars) * 100)
+    if show:
+        df = pd.DataFrame(data)
+        df.to_csv('results.csv', index=False)
