@@ -4,7 +4,7 @@ import config
 import tensorflow
 import tensorflow.keras.backend as K
 from data_loader import data_loader
-import neptune.new as neptune
+# import neptune.new as neptune
 # from neptune.new.integrations.tensorflow_keras import NeptuneCallback
 # from dotenv import load_dotenv
 #
