@@ -7,6 +7,6 @@ editdistance
 taco-box
 tqdm
 loguru
-neptune-client
-neptune-tensorflow-keras
-python-dotenv
+# neptune-client
+# neptune-tensorflow-keras
+# python-dotenv

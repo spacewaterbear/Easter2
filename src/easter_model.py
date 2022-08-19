@@ -5,12 +5,12 @@ import tensorflow
 import tensorflow.keras.backend as K
 from data_loader import data_loader
 import neptune.new as neptune
-from neptune.new.integrations.tensorflow_keras import NeptuneCallback
-from dotenv import load_dotenv
-
-load_dotenv('creds.env')
-print("env var loaded in local")
-_NEPTUNE_API_TOKEN = os.environ['NEPTUNE_API_TOKEN']
+# from neptune.new.integrations.tensorflow_keras import NeptuneCallback
+# from dotenv import load_dotenv
+#
+# load_dotenv('creds.env')
+# print("env var loaded in local")
+# _NEPTUNE_API_TOKEN = os.environ['NEPTUNE_API_TOKEN']
 
 def ctc_loss(args):
     y_pred, labels, input_length, label_length = args
@@ -231,8 +231,8 @@ def Easter2():
 
 def train():
     #Creating Easter2 object
-    run = neptune.init(project='machineai/easter2', api_token=_NEPTUNE_API_TOKEN)
-    neptune_cbk = NeptuneCallback(run=run, base_namespace='metrics')
+    # run = neptune.init(project='machineai/easter2', api_token=_NEPTUNE_API_TOKEN)
+    # neptune_cbk = NeptuneCallback(run=run, base_namespace='metrics')
 
     model = Easter2()
     
@@ -284,7 +284,9 @@ def train():
         generator = training_data.getNext(), 
         steps_per_epoch = STEPS_PER_EPOCH,
         epochs = config.EPOCHS,
-        callbacks=[CHECKPOINT, TENSOR_BOARD, neptune_cbk],
+        callbacks=[CHECKPOINT, TENSOR_BOARD,
+                   # neptune_cbk
+                   ],
         validation_data = validation_data.getNext(), 
         validation_steps = VALIDATION_STEPS
     )
